@@ -27,6 +27,7 @@ vim.o.tabstop = 4
 vim.opt.cursorline = true
 vim.opt.colorcolumn = "120"
 vim.opt.inccommand = "split"
+vim.opt.signcolumn = "yes"
 
 -- -- -- -- -- -- -- --
 -- Basic vim keymaps --
@@ -120,11 +121,43 @@ require("lazy").setup({
         event = 'VeryLazy',
         opts = {},
         keys = {
-            { "<space>f", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+            { "<space>f", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "[F]lash: Jump on screen" },
         }
+    },
+    {
+        'nvim-telescope/telescope.nvim',
+        event = 'VimEnter',
+        branch = '0.1.x',
+        dependencies = {
+            { 'nvim-lua/plenary.nvim' },
+            { 'nvim-telescope/telescope-fzf-native.nvim' },
+            { 'nvim-telescope/telescope-ui-select.nvim' },
+            { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+        },
+        config = function()
+            require('telescope').setup {}
+
+            pcall(require('telescope').load_extension, 'fzf')
+            pcall(require('telescope').load_extension, 'ui-select')
+
+            local builtin = require 'telescope.builtin'
+            vim.keymap.set('n', '<space>sf', builtin.find_files,    { desc = '[S]earch [F]iles' })
+            vim.keymap.set('n', '<space>st', builtin.live_grep,     { desc = '[S]earch [T]ext' })
+            vim.keymap.set('n', '<space>sD', builtin.diagnostics,   { desc = '[S]earch [D]iagnostics' })
+            vim.keymap.set('n', '<space>sr', builtin.resume,        { desc = '[S]earch [R]esume' })
+            vim.keymap.set('n', '<space>sb', builtin.buffers,       { desc = '[S]earch [B]uffers' })
+            vim.keymap.set('n', '<space>sh', builtin.help_tags,     { desc = "[S]earch [H]elp"})
+
+            vim.keymap.set('n', '<space>/', function()
+                builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+                    winblend = 0,
+                })
+            end, { desc = 'Search in current buffer' })
+        end
     },
     -- Good to have:
     { 'tpope/vim-sleuth' },
+    { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     {
         'echasnovski/mini.nvim',
         config = function()
@@ -137,11 +170,12 @@ require("lazy").setup({
         event = 'VimEnter',
         opts = {
             delay = 150,
-            mappings = vim.g.have_nerd_font,
+            icons = { mappings = vim.g.have_nerd_font },
             keys = {},
+            spec = {
+                { '<space>s', group = '[S]earch'}
+            }
         },
-        spec = {
-        }
     },
 
 })
