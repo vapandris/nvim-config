@@ -149,9 +149,7 @@ require("lazy").setup({
             vim.keymap.set('n', '<space>sh', builtin.help_tags,     { desc = "[S]earch [H]elp"})
 
             vim.keymap.set('n', '<space>/', function()
-                builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-                    winblend = 0,
-                })
+                builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {})
             end, { desc = 'Search in current buffer' })
         end
     },
