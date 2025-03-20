@@ -75,21 +75,19 @@ require("lazy").setup({
             end
 
             NeoSolarized.setup {
-              style = "dark",
-              transparent = false,
-              terminal_colors = true,
-              enable_italics = true,
-              styles = {
+            style = "dark",
+            transparent = false,
+            terminal_colors = true,
+            enable_italics = true,
+            styles = {
                 comments = { italic = true },
                 keywords = { bold = true },
                 functions = { bold = true },
                 variables = {},
                 string = { italic = true },
-              },
-            }
+            },
             vim.cmd.colorscheme("NeoSolarized")
         end
-
     },
     {
         "svrana/neosolarized.nvim",
