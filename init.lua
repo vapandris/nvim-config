@@ -67,6 +67,31 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- Colorscheme:
     {
+        'Tsuzat/NeoSolarized.nvim',
+        config = function()
+            local ok_status, NeoSolarized = pcall(require, "NeoSolarized")
+            if not ok_status then
+              return
+            end
+
+            NeoSolarized.setup {
+              style = "dark",
+              transparent = false,
+              terminal_colors = true,
+              enable_italics = true,
+              styles = {
+                comments = { italic = true },
+                keywords = { bold = true },
+                functions = { bold = true },
+                variables = {},
+                string = { italic = true },
+              },
+            }
+            vim.cmd.colorscheme("NeoSolarized")
+        end
+
+    },
+    {
         "svrana/neosolarized.nvim",
         lazy = false,
         priority = 1000,
@@ -75,7 +100,7 @@ require("lazy").setup({
                 comment_italics = true,
                 background_set = true,
             })
-            vim.cmd.colorscheme("neosolarized")
+            -- vim.cmd.colorscheme("neosolarized")
         end,
         dependencies = {
             "tjdevries/colorbuddy.nvim",
@@ -104,6 +129,7 @@ require("lazy").setup({
         signs_staged = { add = { text = '┃' }, change = { text = '┃' }, delete = { text = '┃' } },
         },
     },
+    { 'sindrets/diffview.nvim' },
     -- Navigation:
     {
         'folke/flash.nvim',
