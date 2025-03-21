@@ -161,6 +161,10 @@ require("lazy").setup({
         config = function()
             require('mini.surround').setup()
             require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
+
+            vim.api.nvim_set_hl(0, 'MiniStatuslineFilename', { link = 'Directory' })
+            vim.api.nvim_set_hl(0, 'MiniStatuslineFileinfo', { link = 'Directory' })
+            vim.api.nvim_set_hl(0, 'MiniStatuslineDevinfo',  { link = 'Directory' })
         end
     },
     {
