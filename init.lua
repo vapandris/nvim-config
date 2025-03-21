@@ -5,6 +5,7 @@ vim.g.have_nerd_font = true
 vim.opt.scrolloff = 10
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.wrap = false
 
 vim.opt.mouse = "a"
 
@@ -42,7 +43,10 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 vim.keymap.set("n", "<C-f>", ":%s/", { desc = "Find & replace" })
 
+vim.keymap.set("n", "<space>tw", function() vim.o.wrap = not vim.o.wrap end, { desc = "[T]oggle [W]rap" })
+
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
 
 -- Autocmd to highlight after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -162,9 +166,11 @@ require("lazy").setup({
             require('mini.surround').setup()
             require('mini.statusline').setup { use_icons = vim.g.have_nerd_font }
 
-            vim.api.nvim_set_hl(0, 'MiniStatuslineFilename', { link = 'Directory' })
-            vim.api.nvim_set_hl(0, 'MiniStatuslineFileinfo', { link = 'Directory' })
-            vim.api.nvim_set_hl(0, 'MiniStatuslineDevinfo',  { link = 'Directory' })
+            vim.schedule(function()
+                vim.api.nvim_set_hl(0, 'MiniStatuslineFilename', { link = 'Directory' })
+                vim.api.nvim_set_hl(0, 'MiniStatuslineFileinfo', { link = 'Directory' })
+                vim.api.nvim_set_hl(0, 'MiniStatuslineDevinfo', { link = 'Directory' })
+            end)
         end
     },
     {
@@ -175,7 +181,8 @@ require("lazy").setup({
             icons = { mappings = vim.g.have_nerd_font },
             keys = {},
             spec = {
-                { '<space>s', group = '[S]earch'}
+                { '<space>s', group = '[S]earch'},
+                { '<space>t', group = '[T]oggle'},
             }
         },
     },
