@@ -69,6 +69,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+local servers = {
+    clangd = {},
+    ols = {},
+    lua_ls = {},
+}
+
 require("lazy").setup({
     -- Colorscheme:
     {
@@ -110,6 +116,8 @@ require("lazy").setup({
     -- LSP:
     {
         'neovim/nvim-lspconfig',
+        dependencies = { 'saghen/blink.cmp' },
+
         config = function()
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('nvim-lsp-attach', { clear = true }),
@@ -131,6 +139,11 @@ require("lazy").setup({
                 end
             })
 
+            for server, config in pairs(servers) do
+                config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+                require('lspconfig')[server].setup(config)
+            end
+
             if vim.g.have_nerd_font then
                 local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
                 local diag_signs = {}
@@ -146,12 +159,6 @@ require("lazy").setup({
     {
         'williamboman/mason-lspconfig',
         config = function()
-            local servers = {
-                clangd = {},
-                ols = {},
-                lua_ls = {},
-            }
-
             require('mason-lspconfig').setup {
                 handlers = {
                     function(server_name)
@@ -169,6 +176,20 @@ require("lazy").setup({
         'folke/lazydev.nvim',
         ft = "lua",
         opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } },
+    },
+    {
+        'saghen/blink.cmp',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+        version = '*',
+
+        opts = {
+            keymap = { preset = 'default' },
+            appearance = {
+                nerd_font_variant = 'mono',
+            },
+            fuzzy = { implementation = 'lua' }
+        },
+        opts_extend = { 'sources.default' },
     },
     -- Git shtuff:
     {
