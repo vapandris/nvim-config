@@ -109,6 +109,66 @@ require("lazy").setup({
     },
     -- LSP:
     {
+        'nepvim/nvim-lspconfig',
+        config = function()
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('nvim-lsp-attach', { clear = true }),
+                callback = function(event)
+                    local map = function(keys, func, desc, mode)
+                        mode = mode or 'n'
+                        vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = desc })
+                    end
+
+                    map('gd', require('telescope.builtin').lsp_definitions,     'LSP: [G]oto [D]efinition')
+                    map('gr', require('telescope.builtin').lsp_references,      'LSP: [G]oto [R]eferences')
+                    map('gI', require('telescope.builtin').lsp_implementations, 'LSP: [G]oto [I]mplementation')
+                    map('gD', vim.lsp.buf.declaration,                          'LSP: [G]oto [D]eclaration')
+                    map('<space>r', vim.lsp.buf.rename,                         'LSP: [R]ename')
+
+                    map('<space>sD', require('telescope.builtin').diagnostics,                   '[S]earch [D]iagnostics')
+                    map('<space>sd', require('telescope.builtin').lsp_document_symbols,          '[S]earch [D]ocument symbols')
+                    map('<space>sw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace symbols')
+                end
+            })
+
+            if vim.g.have_nerd_font then
+                local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
+                local diag_signs = {}
+                for type, icon in pairs(signs) do
+                    diag_signs[vim.diagnostic.severity[type]] = icon
+                end
+
+                vim.diagnostic.config { signs = { text = diag_signs } }
+            end
+        end
+    },
+    { 'williamboman/mason.nvim', opts = {} },
+    {
+        'williamboman/mason-lspconfig',
+        config = function()
+            local servers = {
+                clangd = {},
+                ols = {},
+                lua_ls = {},
+            }
+
+            require('mason-lspconfig').setup {
+                handlers = {
+                    function(server_name)
+                      local server = servers[server_name] or {}
+
+                        require('lspconfig')[server_name].setup(server)
+                    end,
+                },
+                automatic_installation = {},
+                ensure_installed = {},
+            }
+        end
+    },
+    {
+        'folke/lazydev.nvim',
+        ft = "lua",
+        opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } },
     },
     -- Git shtuff:
     {
@@ -147,7 +207,6 @@ require("lazy").setup({
             local builtin = require 'telescope.builtin'
             vim.keymap.set('n', '<space>sf', builtin.find_files,    { desc = '[S]earch [F]iles' })
             vim.keymap.set('n', '<space>st', builtin.live_grep,     { desc = '[S]earch [T]ext' })
-            vim.keymap.set('n', '<space>sD', builtin.diagnostics,   { desc = '[S]earch [D]iagnostics' })
             vim.keymap.set('n', '<space>sr', builtin.resume,        { desc = '[S]earch [R]esume' })
             vim.keymap.set('n', '<space>sb', builtin.buffers,       { desc = '[S]earch [B]uffers' })
             vim.keymap.set('n', '<space>sh', builtin.help_tags,     { desc = "[S]earch [H]elp"})
