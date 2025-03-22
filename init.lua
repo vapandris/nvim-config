@@ -109,7 +109,7 @@ require("lazy").setup({
     },
     -- LSP:
     {
-        'nepvim/nvim-lspconfig',
+        'neovim/nvim-lspconfig',
         config = function()
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('nvim-lsp-attach', { clear = true }),
