@@ -47,6 +47,7 @@ vim.keymap.set("n", "<space>tw", function() vim.o.wrap = not vim.o.wrap end, { d
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
+vim.keymap.set("n", "s", "", { noremap = true, silent = true, desc = "Disable s (substitude) key"} )
 
 -- Autocmd to highlight after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -70,7 +71,7 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 local servers = {
-    clangd = {},
+    -- clangd = {},
     ols = {},
     lua_ls = {},
 }
@@ -170,6 +171,13 @@ require("lazy").setup({
                 automatic_installation = {},
                 ensure_installed = {},
             }
+
+            local lspconfig = require 'lspconfig'
+            lspconfig.clangd.setup {
+                capabilities = { offsetEncoding = 'utf-8' },
+                -- cmd = { "/bin/bash", "-c", "BUILD_CONFIGS=${BUILD_CONFIGS:-'Linux_x86_64.debug'} /app/epg/tools/bin/wsclangd" },
+                singleFileSupport = true,
+            }
         end
     },
     {
@@ -199,7 +207,15 @@ require("lazy").setup({
         signs_staged = { add = { text = '┃' }, change = { text = '┃' }, delete = { text = '┃' } },
         },
     },
-    { 'sindrets/diffview.nvim' },
+    {
+        'sindrets/diffview.nvim',
+        config = function ()
+            vim.keymap.set('n', '<space>go', '<cmd>DiffviewOpen<CR>',           { desc = '[G]it-Diff: [O]pen'})
+            vim.keymap.set('n', '<space>gc', '<cmd>DiffviewClose<CR>',          { desc = '[G]it-Diff: [C]lose'})
+            vim.keymap.set('n', '<space>gf', '<cmd>DiffviewFileHistory<CR>',    { desc = '[G]it-Diff: [F]ileHistory'})
+            vim.keymap.set('n', '<space>gt', '<cmd>DiffviewToggleFiles<CR>',    { desc = '[G]it-Diff: [T]oggle'})
+        end
+    },
     -- Navigation:
     {
         'folke/flash.nvim',
@@ -262,6 +278,7 @@ require("lazy").setup({
             keys = {},
             spec = {
                 { '<space>s', group = '[S]earch'},
+                { '<space>g', group = '[G]it'},
                 { '<space>t', group = '[T]oggle'},
             }
         },
