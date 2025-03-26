@@ -210,10 +210,10 @@ require("lazy").setup({
     {
         'sindrets/diffview.nvim',
         config = function ()
-            vim.keymap.set('n', '<space>go', '<cmd>DiffviewOpen<CR>',           { desc = '[G]it-Diff: [O]pen'})
-            vim.keymap.set('n', '<space>gc', '<cmd>DiffviewClose<CR>',          { desc = '[G]it-Diff: [C]lose'})
-            vim.keymap.set('n', '<space>gf', '<cmd>DiffviewFileHistory<CR>',    { desc = '[G]it-Diff: [F]ileHistory'})
-            vim.keymap.set('n', '<space>gt', '<cmd>DiffviewToggleFiles<CR>',    { desc = '[G]it-Diff: [T]oggle'})
+            vim.keymap.set('n', '<space>do', '<cmd>DiffviewOpen<CR>',           { desc = '[D]iffview [O]pen'})
+            vim.keymap.set('n', '<space>dc', '<cmd>DiffviewClose<CR>',          { desc = '[D]iffview [C]lose'})
+            vim.keymap.set('n', '<space>df', '<cmd>DiffviewFileHistory<CR>',    { desc = '[D]iffview [F]ileHistory'})
+            vim.keymap.set('n', '<space>dt', '<cmd>DiffviewToggleFiles<CR>',    { desc = '[D]iffview [T]oggle'})
         end
     },
     -- Navigation:
@@ -298,18 +298,9 @@ require("lazy").setup({
             keys = {},
             spec = {
                 { '<space>s', group = '[S]earch'},
-                { '<space>g', group = '[G]it'},
+                { '<space>d', group = '[D]iffview for Git'},
                 { '<space>t', group = '[T]oggle'},
             }
         },
-    },
-    {
-        'folke/noice.nvim',
-        event = 'VeryLazy',
-        opts = {},
-        dependencies = {
-            'MunifTanjim/nui.nvim',
-            'rcarriga/nvim-notify',
-        }
     },
 })
