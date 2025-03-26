@@ -253,6 +253,26 @@ require("lazy").setup({
             end, { desc = 'Search in current buffer' })
         end
     },
+    {
+        'stevearc/oil.nvim',
+        opts = {},
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function ()
+            require('oil').setup {
+                default_file_explorer = true,
+                columns = { 'icon' },
+                keymaps = {
+                    ["<C-h>"] = false,
+                },
+                view_options = {
+                    show_hidden = true,
+                }
+            }
+
+            vim.keymap.set('n', '-', "<cmd>Oil<CR>", { desc = 'Open parent directoy' })
+        end
+
+    },
     -- Good to have:
     { 'tpope/vim-sleuth' },
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
