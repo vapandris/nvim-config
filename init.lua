@@ -236,14 +236,15 @@ require("lazy").setup({
             { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
         },
         config = function()
-            require('telescope').setup {}
+            require('telescope').setup {
+                extensions = { fzf = {} }
+            }
 
             pcall(require('telescope').load_extension, 'fzf')
             pcall(require('telescope').load_extension, 'ui-select')
 
             local builtin = require 'telescope.builtin'
             vim.keymap.set('n', '<space>sf', builtin.find_files,    { desc = '[S]earch [F]iles' })
-            vim.keymap.set('n', '<space>st', builtin.live_grep,     { desc = '[S]earch [T]ext' })
             vim.keymap.set('n', '<space>sr', builtin.resume,        { desc = '[S]earch [R]esume' })
             vim.keymap.set('n', '<space>sb', builtin.buffers,       { desc = '[S]earch [B]uffers' })
             vim.keymap.set('n', '<space>sh', builtin.help_tags,     { desc = "[S]earch [H]elp"})
@@ -251,6 +252,55 @@ require("lazy").setup({
             vim.keymap.set('n', '<space>/', function()
                 builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {})
             end, { desc = 'Search in current buffer' })
+
+            -- Search for Text (optionally) in ceratin file-types
+            vim.keymap.set('n', '<space>sg',
+                function (opts)
+                    opts = opts or {}
+                    opts.cwd = opts.cwd or vim.uv.cwd()
+
+                    local pickers    = require "telescope.pickers"
+                    local finders    = require "telescope.finders"
+                    local make_entry = require "telescope.make_entry"
+                    local sorters    = require "telescope.sorters"
+                    local conf       = require "telescope.config".values
+
+                    local finder = finders.new_async_job {
+                        command_generator = function (prompt)
+                            if not prompt or prompt == "" then
+                                return nil
+                            end
+
+                            local pieces = vim.split(prompt, "  ")
+                            local cmd = { "rg" }
+                            if pieces[1] then
+                                table.insert(cmd, "-e")
+                                table.insert(cmd, pieces[1])
+                            end
+
+                            if pieces[2] then
+                                table.insert(cmd, "-g")
+                                table.insert(cmd, pieces[2])
+                            end
+
+                            ---@diagnostic disable-next-line: deprecated
+                            return vim.tbl_flatten {
+                                cmd,
+                                { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" }
+                            }
+                        end,
+                        entry_maker = make_entry.gen_from_vimgrep(opts),
+                        cwd = opts.cwd,
+                    }
+                    local picker = pickers.new(opts, {
+                        debaunce = 100,
+                        prompt_title = "Find Text in *.file-types",
+                        finder = finder,
+                        previewer = conf.grep_previewer(opts),
+                        sorter = sorters.empty()
+                    }):find()
+                end,
+                { desc = '[S]earch [G]rep' })
         end
     },
     {
