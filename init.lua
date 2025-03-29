@@ -253,19 +253,11 @@ require("lazy").setup({
                 builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {})
             end, { desc = 'Search in current buffer' })
 
-            -- Search for Text (optionally) in ceratin file-types
             vim.keymap.set('n', '<space>sg',
-                function (opts)
-                    opts = opts or {}
-                    opts.cwd = opts.cwd or vim.uv.cwd()
+                function ()
+                    local opts = { cwd = vim.uv.cwd() }
 
-                    local pickers    = require "telescope.pickers"
-                    local finders    = require "telescope.finders"
-                    local make_entry = require "telescope.make_entry"
-                    local sorters    = require "telescope.sorters"
-                    local conf       = require "telescope.config".values
-
-                    local finder = finders.new_async_job {
+                    local finder = require("telescope.finders").new_async_job {
                         command_generator = function (prompt)
                             if not prompt or prompt == "" then
                                 return nil
@@ -289,15 +281,15 @@ require("lazy").setup({
                                 { "--color=never", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" }
                             }
                         end,
-                        entry_maker = make_entry.gen_from_vimgrep(opts),
+                        entry_maker = require("telescope.make_entry").gen_from_vimgrep(opts),
                         cwd = opts.cwd,
                     }
-                    local picker = pickers.new(opts, {
+                    local picker = require("telescope.pickers").new(opts, {
                         debaunce = 100,
                         prompt_title = "Find Text in *.file-types",
                         finder = finder,
-                        previewer = conf.grep_previewer(opts),
-                        sorter = sorters.empty()
+                        previewer = require("telescope.config").values.grep_previewer(opts),
+                        sorter = require("telescope.sorters").empty()
                     }):find()
                 end,
                 { desc = '[S]earch [G]rep' })
