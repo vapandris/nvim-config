@@ -114,6 +114,7 @@ require("lazy").setup({
             indent = { enable = true },
         },
     },
+    { 'nvim-treesitter/nvim-treesitter-context' },
     -- LSP:
     {
         'neovim/nvim-lspconfig',
