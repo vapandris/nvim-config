@@ -306,6 +306,7 @@ require("lazy").setup({
                 columns = { 'icon' },
                 keymaps = {
                     ["<C-h>"] = false,
+                    ["<C-y>"] = "actions.select"
                 },
                 view_options = {
                     show_hidden = true,
