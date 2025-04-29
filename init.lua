@@ -48,6 +48,7 @@ vim.keymap.set("n", "<space>tw", function() vim.o.wrap = not vim.o.wrap end, { d
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.keymap.set("n", "s", "", { noremap = true, silent = true, desc = "Disable s (substitude) key"} )
+vim.keymap.set("n", "*", "*``", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
 
 -- Autocmd to highlight after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -285,7 +286,7 @@ require("lazy").setup({
                         entry_maker = require("telescope.make_entry").gen_from_vimgrep(opts),
                         cwd = opts.cwd,
                     }
-                    local picker = require("telescope.pickers").new(opts, {
+                    require("telescope.pickers").new(opts, {
                         debaunce = 100,
                         prompt_title = "Find Text in *.file-types",
                         finder = finder,
