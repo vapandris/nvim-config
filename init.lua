@@ -3,8 +3,8 @@
 vim.g.have_nerd_font = true
 
 vim.opt.scrolloff = 10
-vim.opt.number = true
-vim.opt.relativenumber = true
+vim.wo.number = true
+vim.wo.relativenumber = true
 vim.opt.wrap = false
 
 vim.opt.mouse = "a"
@@ -44,6 +44,22 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 vim.keymap.set("n", "<C-f>", ":%s/", { desc = "Find & replace" })
 
 vim.keymap.set("n", "<space>tw", function() vim.o.wrap = not vim.o.wrap end, { desc = "[T]oggle [W]rap" })
+vim.keymap.set("n", "<space>tr", function()
+    if vim.wo.number then
+        vim.wo.relativenumber = not vim.wo.relativenumber
+    end
+end, { desc = "[T]oggle [R]elative numbers" })
+
+vim.keymap.set("n", "<space>tn", function()
+    if vim.wo.number == true then
+        vim.wo.number = false
+        vim.wo.relativenumber = true
+    else
+        vim.wo.number = true
+        vim.wo.relativenumber = false
+    end
+    vim.wo.relativenumber = not vim.wo.relativenumber
+end, { desc = "[T]oggle [R]elative numbers" })
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
