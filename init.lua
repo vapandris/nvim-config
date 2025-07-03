@@ -64,7 +64,7 @@ end, { desc = "[T]oggle [R]elative numbers" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.keymap.set("n", "s", "", { noremap = true, silent = true, desc = "Disable s (substitude) key"} )
-vim.keymap.set("n", "*", "*``", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
+vim.keymap.set("n, v", "*", "*``", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
 
 -- Autocmd to highlight after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
