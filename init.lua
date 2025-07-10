@@ -64,7 +64,8 @@ end, { desc = "[T]oggle [R]elative numbers" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 vim.keymap.set("n", "s", "", { noremap = true, silent = true, desc = "Disable s (substitude) key"} )
--- vim.keymap.set({"n", "v"}, "*", "*N", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
+vim.keymap.set("n", "*", "*N", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
+-- vim.keymap.set("v", "*", "*N", {noremap = true, silent = true, desc = "Don't jump to next result when searching ofr current word"})
 
 -- Autocmd to highlight after yank
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -146,6 +147,14 @@ require("lazy").setup({
                         vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = desc })
                     end
 
+                    local client_supports_method = function(client, method, bufnr)
+                        if vim.fn.has 'nvim-0.11' == 1 then
+                            return client:supports_method(method, bufnr)
+                        else
+                            return client.supports_method(method, { bufnr = bufnr })
+                        end
+                    end
+
                     map('gd', require('telescope.builtin').lsp_definitions,     'LSP: [G]oto [D]efinition')
                     map('gr', require('telescope.builtin').lsp_references,      'LSP: [G]oto [R]eferences')
                     map('gI', require('telescope.builtin').lsp_implementations, 'LSP: [G]oto [I]mplementation')
@@ -155,6 +164,13 @@ require("lazy").setup({
                     map('<space>sD', require('telescope.builtin').diagnostics,                   '[S]earch [D]iagnostics')
                     map('<space>sd', require('telescope.builtin').lsp_document_symbols,          '[S]earch [D]ocument symbols')
                     map('<space>sw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[S]earch [W]orkspace symbols')
+
+                    local client = vim.lsp.get_client_by_id(event.data.client_id)
+                    if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+                        map('<space>th', function()
+                            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+                        end, '[T]oggle [H]ints')
+                    end
                 end
             })
 
@@ -163,15 +179,37 @@ require("lazy").setup({
                 require('lspconfig')[server].setup(config)
             end
 
+            local signs = {}
             if vim.g.have_nerd_font then
-                local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
-                local diag_signs = {}
-                for type, icon in pairs(signs) do
-                    diag_signs[vim.diagnostic.severity[type]] = icon
-                end
-
-                vim.diagnostic.config { signs = { text = diag_signs } }
+                signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
+            else
+                signs = { ERROR = 'X', WARN = '!', INFO = 'i', HINT = '?' }
             end
+
+            local diag_signs = {}
+            for type, icon in pairs(signs) do
+                diag_signs[vim.diagnostic.severity[type]] = icon
+            end
+
+            vim.diagnostic.config {
+                signs = { text = diag_signs },
+                severity_sort = true,
+                float = { border = 'rounded', source = 'if_many' },
+                underline = { severity = vim.diagnostic.severity.ERROR },
+                virtual_text = {
+                    source = 'if_many',
+                    spacing = 2,
+                    format = function(diag)
+                        local diag_msg = {
+                            [vim.diagnostic.severity.ERROR] = diag.message,
+                            [vim.diagnostic.severity.WARN] = diag.message,
+                            [vim.diagnostic.severity.INFO] = diag.message,
+                            [vim.diagnostic.severity.HINT] = diag.message,
+                        }
+                        return diag_msg[diag.severity]
+                    end,
+                },
+            }
         end
     },
     { 'williamboman/mason.nvim', opts = {} },
