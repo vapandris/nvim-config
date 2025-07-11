@@ -167,9 +167,10 @@ require("lazy").setup({
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+                        vim.lsp.inlay_hint.enable(true)
                         map('<space>th', function()
                             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-                        end, '[T]oggle [H]ints')
+                        end, '[T]oggle (parameter) [H]ints')
                     end
                 end
             })
