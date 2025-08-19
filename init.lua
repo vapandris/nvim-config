@@ -271,6 +271,10 @@ require("lazy").setup({
             vim.keymap.set('n', '<space>dc', '<cmd>DiffviewClose<CR>',          { desc = '[D]iffview [C]lose'})
             vim.keymap.set('n', '<space>df', '<cmd>DiffviewFileHistory<CR>',    { desc = '[D]iffview [F]ileHistory'})
             vim.keymap.set('n', '<space>dt', '<cmd>DiffviewToggleFiles<CR>',    { desc = '[D]iffview [T]oggle'})
+
+            vim.keymap.set('n', '<space>gb', '<cmd>Gitsigns blame_line<CR>',    { desc = '[G]it [B]lame'})
+
+            vim.keymap.set("n", "<M-b>", "<cmd>DiffviewToggleFiles<CR>",        { desc = 'Toggle the left bar in Diffview'})
         end
     },
     -- Navigation:
@@ -399,6 +403,7 @@ require("lazy").setup({
             spec = {
                 { '<space>s', group = '[S]earch'},
                 { '<space>d', group = '[D]iffview for Git'},
+                { '<space>g', group = '[G]it'},
                 { '<space>t', group = '[T]oggle'},
             }
         },
